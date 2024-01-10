@@ -11,8 +11,8 @@ struct Node<T> {
 
 pub struct IntoIter<T>(List<T>);
 
-pub struct Iter<T> {
-  next: Option<&Node<T>>,
+pub struct Iter<'a, T> {
+  next: Option<&'a Node<T>>,
 }
 
 impl<T> List<T> {
@@ -52,7 +52,7 @@ impl<T> List<T> {
     IntoIter(self)
   }
 
-  pub fn iter(&self) -> Iter<T> {
+  pub fn iter<'a>(&'a self) -> Iter<'a, T> {
     Iter { next: self.head.map(|node| &node) }
   }
 
@@ -75,8 +75,8 @@ impl<T> Iterator for IntoIter<T> {
   }
 }
 
-impl<T> Iterator for Iter<T> {
-  type Item = &T;
+impl<'a, T> Iterator for Iter<'a, T> {
+  type Item = &'a T;
   fn next(&mut self) -> Option<Self::Item> {
     self.next.map(|node| {
       self.next = node.next.map(|node| &node);
